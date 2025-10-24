@@ -29,7 +29,17 @@
     <script type="text/babel">
         const { useState } = React
         function AnimalsApp() {
-            const animals = ['Cane', 'Gatto', 'Pappagallo', 'Panda', 'Cavallo']
+            const animalsChoice = ['Cane', 'Gatto', 'Pappagallo', 'Panda', 'Cavallo']
+            const [animals, setAnimals] = useState([])
+            const [isModalOpen, setIsModalOpen] = useState(false)
+
+            function handleClick() {
+                const randomIndex = (Math.floor(Math.random() * animalsChoice.length))
+                const randomAnimal = animalsChoice[randomIndex]
+                setAnimals([...animals, randomAnimal])
+
+            }
+
             return (
                 <div>
                     <details>
@@ -37,17 +47,41 @@
                             Animali
                         </summary>
                         <ul>
-                            {animals.map((animal, index) => {
+                            {animals.map((animal, i) => {
                                 return (
-                                    <li key={index}>{animal}</li>
+                                    <li key={i}>{animal}</li>
                                 )
                             })}
                         </ul>
                     </details>
+                    <button onClick={handleClick}>Mostra un animale</button>
+                    <Modal show={isModalOpen} title="Aggiungi un animale" content="Scrivi il nome di un animale!" />
                 </div>
+
+
             )
 
         }
+
+        function Modal({
+            title,
+            content,
+            show = false,
+            onClose = () => { }
+        }) {
+            return show && ReactDOM.createPortal(
+                <div className="modal-container">
+                    <div className="modal">
+                        <h2>{title}</h2>
+                        <p>{content}</p>
+                        <button onClick={onClose}>Annulla</button>
+                    </div>
+                </div>,
+                document.body
+            )
+        }
+
+
         const { createRoot } = ReactDOM
         const divAnimali = document.querySelector('.lista-animali')
         const root = createRoot(divAnimali)
