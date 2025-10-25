@@ -32,14 +32,27 @@
             const animalsChoice = ['Cane', 'Gatto', 'Pappagallo', 'Panda', 'Cavallo']
             const [animals, setAnimals] = useState([])
             const [isModalOpen, setIsModalOpen] = useState(false)
+            const [inputValue, setInputValue] = useState('')
+            const [results, setResults] = useState(false)
 
             function handleClick() {
-                const randomIndex = (Math.floor(Math.random() * animalsChoice.length))
-                const randomAnimal = animalsChoice[randomIndex]
-                setAnimals([...animals, randomAnimal])
+
+                setIsModalOpen(true)
+                // const randomIndex = (Math.floor(Math.random() * animalsChoice.length))
+                // const randomAnimal = animalsChoice[randomIndex]
+                // setAnimals([...animals, randomAnimal])
 
             }
 
+
+
+            function handleConfirm() {
+                if (inputValue) {
+                    setAnimals([...animals, inputValue]);
+                    setInputValue('')
+                    setIsModalOpen(false);
+                }
+            }
             return (
                 <div>
                     <details>
@@ -54,8 +67,13 @@
                             })}
                         </ul>
                     </details>
-                    <button onClick={handleClick}>Mostra un animale</button>
-                    <Modal show={isModalOpen} title="Aggiungi un animale" content="Scrivi il nome di un animale!" />
+                    <button onClick={handleClick}>Aggiungi un animale alla lista</button>
+                    <Modal show={isModalOpen} title="Aggiungi un animale"
+                        content={<input type="text" placeholder="Nome dell'animale"
+                            value={inputValue}
+                            onChange={(e) => setInputValue(e.target.value)} />}
+                        onClose={() => setIsModalOpen(false)}
+                        onConfirm={handleConfirm} />
                 </div>
 
 
@@ -67,14 +85,18 @@
             title,
             content,
             show = false,
-            onClose = () => { }
+            onClose = () => { },
+            onConfirm = () => { }
         }) {
             return show && ReactDOM.createPortal(
                 <div className="modal-container">
                     <div className="modal">
                         <h2>{title}</h2>
                         <p>{content}</p>
-                        <button onClick={onClose}>Annulla</button>
+                        <div class="btn">
+                            <button onClick={onClose}>Annulla</button>
+                            <button onClick={onConfirm}>Conferma</button>
+                        </div>
                     </div>
                 </div>,
                 document.body
